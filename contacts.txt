@@ -1,0 +1,6 @@
+"Maël", "QUERRÉ", "0649782912", "Saint-Contest", "09/09/1996"
+"Vincent", "DE MENEZES", "0601010101", "Clamart", ""
+"Gabriel", "FAURÉ", "", "Pamiers", "12/05/1845"
+"Claude", "DEBUSSY", "0602020202", "Saint-Germain-en-laye", "22/08/1862"
+"Frédéric", "CHOPIN", "", "Żelazowa Wola", "01/03/1810"
+"Jean-Sébastien", "BACH", "", "Eisenach", "31/03/1685"

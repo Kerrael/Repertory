@@ -4,6 +4,7 @@ aujourdhui = date.today()
 moisCourant = aujourdhui.month
 
 
+
 p0 = ["Prénom", "NOM", "Numéro mobile", "Adresse", "Date de naissance"]
 
 p1 = ["Maël", "QUERRÉ", "0649782912", "Saint-Contest", "09/09/1996"]
@@ -15,75 +16,228 @@ p6 = ["Jean-Sébastien", "BACH", "", "Eisenach", "31/03/1685"]
 
 personnes = [p1, p2, p3, p4, p5, p6]
 
+print(personnes)
+
 OK = 0
 WRONG_INPUT = 1
 NOTHING_WERE_GIVEN = 2
+NO_MATCH_FOUND = 3
+ERROR_BIRTHDAY = 4
 
 
-def test(tuple_saisie):
-    if rNom != "":
-        result = detect_nom(rNom)
-    if rPrenom != "":
-        result1 = result
-        result1 = detect_prenom(rPrenom)
-    if result == result1:
-        if rMobile != "":
-            result = detect_telephone(rMobile)
-        if rAdresse != "":
-            result1 = result
-            result1 = detect_adresse(rAdresse)
-    if result == result1 and result == -1:
-        print("Contact inexistant")
-    elif result != result1:
-        print("Contact inexistant")
-    else:
-        print(personnes[result])
+def main():
+    creer_liste_contacts()
+    saisieChoix = saisie()
+    testChoix = test_choix(saisieChoix)
+    result(testChoix)
+
+
+def creer_liste_contacts():
+    file = open("contacts.txt", "r")
+    res = file.readlines()
+    print(res[5])
+    newchain = ""
+    newlist = []
+
+    i = 0
+    j = 0
+    while i < len(res):
+        if res[i] == '\n':
+            newlist.append(ft_creer_liste(newchain))
+            newchain = ""
+            j = 0
+        else:
+            if res[i] != chr(47):
+                print(i)
+                newchain += res[i]
+        i += 1
+        j += 1
+    print(newlist)
+
+
+def ft_creer_liste(chaine):
+    i = 0
+    newlist = []
+    newlist.append(chaine)
+
+    # while i < len(chaine):
+    #     newlist.append(chaine[i])
+    #     i += 1
+
+    return newlist
 
 
 def saisie():
-    rNom = input("Saisissez votre nom : ")
-    rPrenom = input("Saisissez votre prénom : ")
-    rMobile = input("Saisissez votre numéro de téléphone mobile : ")
-    rAdresse = input("Saisissez votre adresse : ")
-    return rNom, rPrenom, rMobile, rAdresse
+    """Fonction demandant un choix à l'utilisateur.
+    Fonction présentant une liste d'actions à réaliser sur le répertoire.
+
+    :return:
+    """
+    print("Vous souhaitez : ")
+    print("- rechercher une personne par nom et prénom ? (p)")
+    print("- rechercher une personne ayant un numéro de téléphone donné ? (t)")
+    print("- rechercher une personne dont l'anniversaire tombe pendant le mois courant ? (an)")
+    print("- ajouter un contact ? (aj)")
+    print("- modifier des informations ? (m)")
+    print("- supprimer des informations ? (sup)")
+    choix = input("Réponse : ")
+    return choix
 
 
-def test_entree(entree):
-    res = 0
-    i = 0
-    while i < 4:
-        if entree[i] == "":
-            res = NOTHING_WERE_GIVEN
-        res = entree
-        i += 1
-    return res
+def test_choix(choix):
+    """Vérifie le type du paramètre choix
+
+    :param choix:
+    :return:
+    """
+    testInput = test_input(choix)
+    while testInput != OK:
+        print(message_erreur(testInput))
+        choix = saisie()
+        testInput = test_input(choix)
+    return choix
 
 
-def detect_nom(nom):
+def test_input(choix):
+    if choix == "":
+        return NOTHING_WERE_GIVEN
+    if choix != "p" and choix != "t" and choix != "an" and choix != "aj" and choix != "m" and choix != "sup":
+        return WRONG_INPUT
+    return OK
+
+
+def result(choix):
+    if choix == "p":
+        saisieNom = saisie_nom_prenom()
+        testNom = test_nom(saisieNom[0], saisieNom[1])
+        while testNom != OK:
+            print(message_erreur(testNom))
+            saisieNom = saisie_nom_prenom()
+            testNom = test_nom(saisieNom[0], saisieNom[1])
+        afficher_contact(saisieNom[0], saisieNom[1])
+    if choix == "t":
+        afficher_contacts_telephone()
+    if choix == "an":
+        testAnniversaire = test_anniversaire()
+        if testAnniversaire != OK:
+            print(message_erreur(testAnniversaire))
+        else:
+            afficher_contacts_anniversaire()
+    if choix == "aj":
+        saisieContact = saisie_contact()
+        ajout_contact(saisieContact)
+    # if choix == "m":
+    #     choixContact = choix_contact()
+
+
+def saisie_contact():
+    prenom = input("Ajouter un prénom : ")
+    nom = input("Ajouter un nom : ")
+    mobile = input("Ajouter un numéro de mobile : ")
+    adresse = input("Ajouter une adresse : ")
+    naissance = input("Ajouter une date de naissance : ")
+    return [prenom, nom, mobile, adresse, naissance]
+
+
+def ajout_contact(contact):
+    global personnes
+    personnes += [contact]
+
+
+def saisie_nom_prenom():
+    nom = input("Nom de la personne à rechercher : ")
+    prenom = input("Prénom de la personne à rechercher : ")
+    return nom, prenom
+
+
+def test_nom(nom, prenom):
+    pos = detect_contact(nom, prenom)
+    if pos == ():
+        return NO_MATCH_FOUND
+    return OK
+
+
+def test_anniversaire():
+    pos = detect_anniversaire()
+    if pos == ():
+        return ERROR_BIRTHDAY
+    return OK
+
+
+def afficher_contact(nom, prenom):
+    pos = detect_contact(nom, prenom)
+    for p in pos:
+        pers = ""
+        i = 0
+        while i < len(p0):
+            if personnes[p][i] != "":
+                pers += "  " + personnes[p][i]
+            i += 1
+        print(pers)
+
+
+def afficher_contacts_telephone():
+    pos = detect_telephone()
+    for p in pos:
+        pers = ""
+        i = 0
+        while i < len(p0):
+            if personnes[p][i] != "":
+                pers += "  " + personnes[p][i]
+            i += 1
+        print(pers)
+
+
+def afficher_contacts_anniversaire():
+    pos = detect_anniversaire()
+    for p in pos:
+        pers = ""
+        i = 0
+        while i < len(p0):
+            if personnes[p][i] != "":
+                pers += "  " + personnes[p][i]
+            i += 1
+        print(pers)
+
+
+def detect_contact(nom, prenom):
+    pos = ()
     i = 0
     while i < len(personnes):
-        if personnes[i][1] == nom:
-            return i
+        if personnes[i][0] == prenom and personnes[i][1] == nom:
+            pos += (i,)
         i += 1
-    print("a")
-    return -1
+    return pos
 
 
-def detect_prenom(prenom):
+def detect_telephone():
+    pos = ()
     i = 0
     while i < len(personnes):
-        if personnes[i][0] == prenom:
-            return i
+        if personnes[i][2] != "":
+            pos += (i,)
         i += 1
-    print("a")
-    return -1
+    return pos
 
 
-def detect_adresse(adresse):
+def detect_anniversaire():
+    pos = ()
     i = 0
     while i < len(personnes):
-        if personnes[i][3] == adresse:
-            return i
+        if personnes[i][4][3:5] != "":
+            if int(personnes[i][4][3:5]) == moisCourant:
+                pos += (i,)
         i += 1
-    print("a")
-    return -1
+    return pos
+
+
+def message_erreur(n):
+    tabErreurs = ["OK",
+                  "Mauvaise saisie",
+                  "Aucun choix n'a été donné",
+                  "Pas de résultat trouvé",
+                  "Aucun contact ne fête son anniversaire pendant le mois courant"]
+    return tabErreurs[n]
+
+
+main()
