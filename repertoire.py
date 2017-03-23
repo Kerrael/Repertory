@@ -4,19 +4,16 @@ aujourdhui = date.today()
 moisCourant = aujourdhui.month
 
 
+# p0 = ["Prénom", "NOM", "Numéro mobile", "Adresse", "Date de naissance"]
 
-p0 = ["Prénom", "NOM", "Numéro mobile", "Adresse", "Date de naissance"]
+# p1 = ["Maël", "QUERRÉ", "0649782912", "Saint-Contest", "09/09/1996"]
+# p2 = ["Vincent", "DE MENEZES", "0601010101", "Clamart", ""]
+# p3 = ["Gabriel", "FAURÉ", "", "Pamiers", "12/05/1845"]
+# p4 = ["Claude", "DEBUSSY", "0602020202", "Saint-Germain-en-laye", "22/08/1862"]
+# p5 = ["Frédéric", "CHOPIN", "", "Żelazowa Wola", "01/03/1810" ]
+# p6 = ["Jean-Sébastien", "BACH", "", "Eisenach", "31/03/1685"]
 
-p1 = ["Maël", "QUERRÉ", "0649782912", "Saint-Contest", "09/09/1996"]
-p2 = ["Vincent", "DE MENEZES", "0601010101", "Clamart", ""]
-p3 = ["Gabriel", "FAURÉ", "", "Pamiers", "12/05/1845"]
-p4 = ["Claude", "DEBUSSY", "0602020202", "Saint-Germain-en-laye", "22/08/1862"]
-p5 = ["Frédéric", "CHOPIN", "", "Żelazowa Wola", "01/03/1810" ]
-p6 = ["Jean-Sébastien", "BACH", "", "Eisenach", "31/03/1685"]
-
-personnes = [p1, p2, p3, p4, p5, p6]
-
-print(personnes)
+# personnes = [p1, p2, p3, p4, p5, p6]
 
 OK = 0
 WRONG_INPUT = 1
@@ -34,46 +31,65 @@ def main():
 
 def creer_liste_contacts():
     file = open("contacts.txt", "r")
-    res = file.readlines()
-    print(res[5])
-    newchain = ""
-    newlist = []
-
+    lines = file.readlines()
+    lst = []
+    elem = ""
     i = 0
-    j = 0
-    while i < len(res):
-        if res[i] == '\n':
-            newlist.append(ft_creer_liste(newchain))
-            newchain = ""
-            j = 0
-        else:
-            if res[i] != chr(47):
-                print(i)
-                newchain += res[i]
+    while i < len(lines):
+        j = 0
+        while j < len(lines[i]):
+            while lines[i][j] != '\n':
+                elem = ""
+                while lines[i][j] != " ":
+                    elem += lines[i][j]
+                    j += 1
+                lst.append(elem)
+                j += 1
         i += 1
-        j += 1
-    print(newlist)
+    print(lst)
+
+    file.close()
 
 
-def ft_creer_liste(chaine):
+# def creer_liste_contacts():
+#     file = open("contacts.txt", "r")
+#     res = file.readlines()
+#     print(res)
+#     print(res[2])
+#     chaine = ""
+#     lst = []
+#     i = 0
+#     j = 0
+#     while i < len(res):
+#         if res[i] == '\n':
+#             lst.append(creer_liste(chaine))
+#             chaine = ""
+#             j = 0
+#         elif res[i] != chr(47):
+#             chaine += res[i]
+#         i += 1
+#         j += 1
+#     file.close()
+
+
+def creer_liste(chain):
     i = 0
-    newlist = []
-    newlist.append(chaine)
-
-    # while i < len(chaine):
-    #     newlist.append(chaine[i])
-    #     i += 1
-
-    return newlist
+    lst = []
+    lst.append(chain)
+    while i < len(chain):
+         lst.append(chain[i])
+         i += 1
+    print("lol", lst)
+    return lst
 
 
 def saisie():
     """Fonction demandant un choix à l'utilisateur.
     Fonction présentant une liste d'actions à réaliser sur le répertoire.
-
-    :return:
+    :return: Le choix de l'utilisateur.
+    :rtype: Une chaîne de caractère(s).
     """
-    print("Vous souhaitez : ")
+    print("Que souhaitez-vous faire ?")
     print("- rechercher une personne par nom et prénom ? (p)")
     print("- rechercher une personne ayant un numéro de téléphone donné ? (t)")
     print("- rechercher une personne dont l'anniversaire tombe pendant le mois courant ? (an)")
@@ -85,10 +101,11 @@ def saisie():
 
 
 def test_choix(choix):
-    """Vérifie le type du paramètre choix
-
-    :param choix:
-    :return:
+    """Vérifie le type du paramètre 'choix'.
+    Teste si le choix correspond à ce qui est demandé.
+    :param choix: Le choix de l'utilisateur.
+    :return: Le choix de l'utilisateur.
+    :rtype: Une chaîne de caractères.
     """
     testInput = test_input(choix)
     while testInput != OK:
@@ -139,8 +156,8 @@ def saisie_contact():
     return [prenom, nom, mobile, adresse, naissance]
 
 
-def ajout_contact(contact):
-    global personnes
+def ajout_contact(contact, fichier):
+    file = open
     personnes += [contact]
 
 
